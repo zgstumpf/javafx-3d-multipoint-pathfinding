@@ -24,15 +24,24 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         Group root = new Group();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
-        Image skyBackground = new Image(getClass().getResource("/images/sky.png").toExternalForm());
+        Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
         scene.setFill(new ImagePattern(skyBackground));
 
         Box baseplate = new Box(2000, 10, 2000);
         baseplate.setTranslateY(200);
         root.getChildren().add(baseplate);
 
-        Sphere sphere = new Sphere(50);
-        root.getChildren().add(sphere);
+        Sphere sphere1 = new Sphere(50);
+        root.getChildren().add(sphere1);
+
+        Sphere sphere2 = new Sphere(50);
+        sphere2.setTranslateX(400);
+        root.getChildren().add(sphere2);
+
+        Box obstacle = new Box(20, 300, 500);
+        obstacle.setTranslateX(200);
+        root.getChildren().add(obstacle);
+
 
         Camera camera = new PerspectiveCamera(true);
         camera.setFarClip(20_000);
