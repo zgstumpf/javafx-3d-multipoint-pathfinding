@@ -18,17 +18,13 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Sphere sphere = new Sphere(50);
-        sphere.setTranslateX(WIDTH / 2);
-        sphere.setTranslateY(HEIGHT / 2);
 
         Group group = new Group();
         group.getChildren().add(sphere);
 
         Camera camera = new PerspectiveCamera(true);
         camera.setFarClip(2000);
-        camera.setTranslateZ(-1200);
-        camera.setTranslateX(WIDTH / 2);
-        camera.setTranslateY(HEIGHT / 2);
+        camera.setTranslateZ(-800);
 
         Scene scene = new Scene(group, WIDTH, HEIGHT);
         scene.setCamera(camera);
@@ -38,8 +34,14 @@ public class HelloApplication extends Application {
                 case W:
                     camera.setTranslateZ(camera.getTranslateZ() + 50);
                     break;
+                case A:
+                    camera.setTranslateX(camera.getTranslateX() - 5);
+                    break;
                 case S:
                     camera.setTranslateZ(camera.getTranslateZ() - 50);
+                    break;
+                case D:
+                    camera.setTranslateX(camera.getTranslateX() + 5);
                     break;
             }
         });
