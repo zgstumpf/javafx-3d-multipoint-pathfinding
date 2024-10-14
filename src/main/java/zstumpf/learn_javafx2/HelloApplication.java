@@ -3,14 +3,17 @@ package zstumpf.learn_javafx2;
 import javafx.application.Application;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
+import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Camera;
 import javafx.scene.transform.Rotate;
-import javafx.geometry.Point3D;
 
+import java.io.File;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
@@ -19,16 +22,22 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Sphere sphere = new Sphere(50);
+        Group root = new Group();
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
+        Image skyBackground = new Image(getClass().getResource("/images/sky.png").toExternalForm());
+        scene.setFill(new ImagePattern(skyBackground));
 
-        Group group = new Group();
-        group.getChildren().add(sphere);
+        Box baseplate = new Box(2000, 10, 2000);
+        baseplate.setTranslateY(200);
+        root.getChildren().add(baseplate);
+
+        Sphere sphere = new Sphere(50);
+        root.getChildren().add(sphere);
 
         Camera camera = new PerspectiveCamera(true);
-        camera.setFarClip(2000);
+        camera.setFarClip(20_000);
         camera.setTranslateZ(-800);
 
-        Scene scene = new Scene(group, WIDTH, HEIGHT);
         scene.setCamera(camera);
 
         Rotate cameraRotationX = new Rotate(0, camera.getTranslateX(), camera.getTranslateY(), camera.getTranslateZ(), Rotate.X_AXIS);
@@ -51,16 +60,16 @@ public class HelloApplication extends Application {
                     camera.setTranslateX(camera.getTranslateX() + 5);
                     break;
                 case UP:
-                    cameraRotationX.setAngle(cameraRotationX.getAngle() + 0.25);
+                    cameraRotationX.setAngle(cameraRotationX.getAngle() + 0.5);
                     break;
                 case DOWN:
-                    cameraRotationX.setAngle(cameraRotationX.getAngle() - 0.25);
+                    cameraRotationX.setAngle(cameraRotationX.getAngle() - 0.5);
                     break;
                 case RIGHT:
-                    cameraRotationY.setAngle(cameraRotationY.getAngle() + 0.25);
+                    cameraRotationY.setAngle(cameraRotationY.getAngle() + 0.5);
                     break;
                 case LEFT:
-                    cameraRotationY.setAngle(cameraRotationY.getAngle() - 0.25);
+                    cameraRotationY.setAngle(cameraRotationY.getAngle() - 0.5);
                     break;
             }
         });
