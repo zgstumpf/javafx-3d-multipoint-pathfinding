@@ -55,11 +55,13 @@ public class HelloApplication extends Application {
                     break;
                 case DOWN:
                     cameraRotationX.setAngle(cameraRotationX.getAngle() - 0.25);
+                    break;
                 case RIGHT:
                     cameraRotationY.setAngle(cameraRotationY.getAngle() + 0.25);
                     break;
                 case LEFT:
                     cameraRotationY.setAngle(cameraRotationY.getAngle() - 0.25);
+                    break;
             }
         });
 
