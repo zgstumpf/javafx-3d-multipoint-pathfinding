@@ -8,6 +8,8 @@ import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Camera;
+import javafx.scene.transform.Rotate;
+import javafx.geometry.Point3D;
 
 import java.io.IOException;
 
@@ -29,20 +31,35 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(group, WIDTH, HEIGHT);
         scene.setCamera(camera);
 
+        Rotate cameraRotationX = new Rotate(0, camera.getTranslateX(), camera.getTranslateY(), camera.getTranslateZ(), Rotate.X_AXIS);
+        Rotate cameraRotationY = new Rotate(0, camera.getTranslateX(), camera.getTranslateY(), camera.getTranslateZ(), Rotate.Y_AXIS);
+        camera.getTransforms().add(cameraRotationX);
+        camera.getTransforms().add(cameraRotationY);
+
         stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
             switch (keyEvent.getCode()) {
                 case W:
                     camera.setTranslateZ(camera.getTranslateZ() + 50);
                     break;
-                case A:
-                    camera.setTranslateX(camera.getTranslateX() - 5);
-                    break;
                 case S:
                     camera.setTranslateZ(camera.getTranslateZ() - 50);
+                    break;
+                case A:
+                    camera.setTranslateX(camera.getTranslateX() - 5);
                     break;
                 case D:
                     camera.setTranslateX(camera.getTranslateX() + 5);
                     break;
+                case UP:
+                    cameraRotationX.setAngle(cameraRotationX.getAngle() + 0.25);
+                    break;
+                case DOWN:
+                    cameraRotationX.setAngle(cameraRotationX.getAngle() - 0.25);
+                case RIGHT:
+                    cameraRotationY.setAngle(cameraRotationY.getAngle() + 0.25);
+                    break;
+                case LEFT:
+                    cameraRotationY.setAngle(cameraRotationY.getAngle() - 0.25);
             }
         });
 
