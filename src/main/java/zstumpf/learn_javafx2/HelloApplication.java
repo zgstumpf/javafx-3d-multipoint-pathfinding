@@ -24,20 +24,20 @@ public class HelloApplication extends Application {
         Group group = new Group();
         group.getChildren().add(sphere);
 
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case W:
-                    sphere.translateZProperty().set(sphere.getTranslateZ() - 50);
-                    break;
-                case S:
-                    sphere.translateZProperty().set(sphere.getTranslateZ() + 50);
-                    break;
-            }
-        });
-
         Camera camera = new PerspectiveCamera();
         Scene scene = new Scene(group, WIDTH, HEIGHT);
         scene.setCamera(camera);
+
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case W:
+                    camera.setTranslateZ(camera.getTranslateZ() + 50);
+                    break;
+                case S:
+                    camera.setTranslateZ(camera.getTranslateZ() - 50);
+                    break;
+            }
+        });
 
         stage.setTitle("JavaFX Stage");
         stage.setScene(scene);
