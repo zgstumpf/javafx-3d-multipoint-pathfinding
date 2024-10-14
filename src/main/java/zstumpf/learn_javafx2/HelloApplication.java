@@ -13,18 +13,23 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
     private final static double WIDTH = 1000;
-    private final static double HEIGHT = 800;
+    private final static double HEIGHT = 600;
 
     @Override
     public void start(Stage stage) throws IOException {
         Sphere sphere = new Sphere(50);
-        sphere.translateXProperty().set(WIDTH/2);
-        sphere.translateYProperty().set(HEIGHT/2);
+        sphere.setTranslateX(WIDTH / 2);
+        sphere.setTranslateY(HEIGHT / 2);
 
         Group group = new Group();
         group.getChildren().add(sphere);
 
-        Camera camera = new PerspectiveCamera();
+        Camera camera = new PerspectiveCamera(true);
+        camera.setFarClip(2000);
+        camera.setTranslateZ(-1200);
+        camera.setTranslateX(WIDTH / 2);
+        camera.setTranslateY(HEIGHT / 2);
+
         Scene scene = new Scene(group, WIDTH, HEIGHT);
         scene.setCamera(camera);
 
