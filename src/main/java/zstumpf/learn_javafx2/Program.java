@@ -12,49 +12,13 @@ import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Camera;
 import javafx.scene.transform.Rotate;
-import javafx.geometry.Point3D;
 
-import java.io.File;
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+
+public class Program extends Application {
     private final static double WIDTH = 1000;
     private final static double HEIGHT = 600;
-
-    /**
-     * Determines if the 3D point is inside the 3D box.
-     * This is used to detect points that are impossible to travel to because
-     * they are inside the box object.
-     * @param box Box instance
-     * @param point Point3D instance
-     * @return true if point is inside box; false otherwise
-     */
-    public boolean contains(Box box, Point3D point) {
-
-        // Basic box geometry data
-        double width = box.getWidth();
-        double height = box.getHeight();
-        double depth = box.getDepth();
-        Point3D boxCenter = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());
-
-        // Advanced box geometry data
-        double rightSideOfBox = boxCenter.getX() + (width / 2);
-        double leftSideOfBox = boxCenter.getX() - (width / 2);
-        // In JavaFX, Y values get more positive as you go down the Y axis.
-        double bottomOfBox = boxCenter.getY() + (height / 2);
-        double topOfBox = boxCenter.getY() - (height / 2);
-        double nearSideOfBox = boxCenter.getZ() - (depth / 2);
-        double farSideOfBox = boxCenter.getZ() + (depth / 2);
-
-        // Determine if point coordinates are within all sides of Box
-        return (point.getX() >= leftSideOfBox &&
-                point.getX() <= rightSideOfBox &&
-                point.getY() <= bottomOfBox &&
-                point.getY() >= topOfBox &&
-                point.getZ() >= nearSideOfBox &&
-                point.getZ() <= farSideOfBox);
-
-    }
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -74,9 +38,9 @@ public class HelloApplication extends Application {
         sphere2.setTranslateX(400);
         root.getChildren().add(sphere2);
 
-        Box obstacle = new Box(20, 300, 500);
-        obstacle.setTranslateX(200);
-        root.getChildren().add(obstacle);
+        Obstacle wall = new Obstacle(20, 300, 500);
+        wall.setTranslateX(200);
+        root.getChildren().add(wall);
 
 
         Camera camera = new PerspectiveCamera(true);

@@ -1,0 +1,45 @@
+package zstumpf.learn_javafx2;
+
+import javafx.geometry.Point3D;
+import javafx.scene.shape.Box;
+
+public class Obstacle extends Box {
+
+    public Obstacle(double width, double height, double depth) {
+        super(width, height, depth);
+    }
+
+    /**
+     * Determines if the 3D point is inside the 3D obstacle.
+     * This is used to detect points that are impossible to travel to because
+     * they are inside the obstacle object.
+     * @param point Point3D instance
+     * @return true if point is inside obstacle; false otherwise
+     */
+    public boolean contains(Point3D point) {
+
+        // Basic obstacle geometry data
+        double width = this.getWidth();
+        double height = this.getHeight();
+        double depth = this.getDepth();
+        Point3D obstacleCenter = new Point3D(this.getTranslateX(), this.getTranslateY(), this.getTranslateZ());
+
+        // Advanced obstacle geometry data
+        double rightSideOfObstacle = obstacleCenter.getX() + (width / 2);
+        double leftSideOfObstacle = obstacleCenter.getX() - (width / 2);
+        // In JavaFX, Y values get more positive as you go down the Y axis.
+        double bottomOfObstacle = obstacleCenter.getY() + (height / 2);
+        double topOfObstacle = obstacleCenter.getY() - (height / 2);
+        double nearSideOfObstacle = obstacleCenter.getZ() - (depth / 2);
+        double farSideOfObstacle = obstacleCenter.getZ() + (depth / 2);
+
+        // Determine if point coordinates are within all sides of Obstacle
+        return (point.getX() >= leftSideOfObstacle &&
+                point.getX() <= rightSideOfObstacle &&
+                point.getY() <= bottomOfObstacle &&
+                point.getY() >= topOfObstacle &&
+                point.getZ() >= nearSideOfObstacle &&
+                point.getZ() <= farSideOfObstacle);
+
+    }
+}
