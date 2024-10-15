@@ -132,23 +132,25 @@ public class Program extends Application {
 
 
 
-        Target target0 = new Target(0, 0, 0);
+        Target target0 = new Target(1, 0, 0, 0);
         root.getChildren().add(target0);
 
-        Target target1 = new Target(400, 0, 0);
+        Target target1 = new Target(2, 400, 0, 0);
         root.getChildren().add(target1);
 
         Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
         root.getChildren().add(wall);
 
+        System.out.println("Starting A*");
+        System.out.println(AStarSearch.getShortestPath(target0, target1).toString());
 
+
+        // Final setup instructions
         buildCamera();
         handleKeyboard(scene);
         handleMouse(scene);
-
         scene.setCamera(camera.getCamera());
-
-        stage.setTitle("JavaFX Stage");
+        stage.setTitle("3D Multipoint Pathfinder");
         stage.setScene(scene);
         stage.show();
     }
