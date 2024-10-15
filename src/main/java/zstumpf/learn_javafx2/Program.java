@@ -1,6 +1,7 @@
 package zstumpf.learn_javafx2;
 
 import javafx.application.Application;
+import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -13,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.scene.transform.Rotate;
 
 import java.io.IOException;
+import java.util.List;
 
 
 public class Program extends Application {
@@ -142,8 +144,9 @@ public class Program extends Application {
         root.getChildren().add(wall);
 
         System.out.println("Starting A*");
-        System.out.println(AStarSearch.getShortestPath(target0, target1).toString());
-
+        List<Point3D> shortestPath = AStarSearch.getShortestPath(target0, target1);
+        System.out.println(shortestPath.toString());
+        PathNode.renderPath(shortestPath, root);
 
         // Final setup instructions
         buildCamera();
