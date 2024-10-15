@@ -1,17 +1,15 @@
 package zstumpf.learn_javafx2;
 
 import javafx.application.Application;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.Camera;
 import javafx.scene.transform.Rotate;
 
 import java.io.IOException;
@@ -20,6 +18,120 @@ import java.io.IOException;
 public class Program extends Application {
     private final static double WIDTH = 1000;
     private final static double HEIGHT = 600;
+
+    private static final double SHIFT_MULTIPLIER = 30.0;
+    private static final double ROTATION_SPEED = 0.1;
+    private final Group root = new Group();
+    private final ZokkCamera camera = new ZokkCamera();
+
+    private double mousePosX;
+    private double mousePosY;
+    private double mouseOldX;
+    private double mouseOldY;
+    private double dx;
+    private double dy;
+
+    /**
+     * add created {@link Camera} object to scene
+     */
+    private void buildCamera() {
+        root.getChildren().add(camera.getXForm());
+        //cameraXform.setPivot(100,100,100);
+    }
+
+    /**
+     * Create mouse handlers
+     * @param scene
+     */
+    private void handleMouse(Scene scene){
+
+        scene.setOnMousePressed(event -> {
+            mousePosX = event.getSceneX();
+            mousePosY = event.getSceneY();
+//            PickResult pick = event.getPickResult();
+//            // picking up obstacle and changed draw mode to opposite
+//            if(pick != null) {
+//                Node pickedNode = pick.getIntersectedNode();
+//                if(pickedNode instanceof MeshView){
+//                    MeshView pickedMeshView = (MeshView) pickedNode;
+//                    if(pickedMeshView.getDrawMode() == DrawMode.FILL)
+//                        pickedMeshView.setDrawMode(DrawMode.LINE);
+//                    else if(pickedMeshView.getDrawMode() == DrawMode.LINE)
+//                        pickedMeshView.setDrawMode(DrawMode.FILL);
+//                }
+            //}
+        });
+
+        scene.setOnMouseDragged(event -> {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = event.getSceneX();
+            mousePosY = event.getSceneY();
+            dx = mousePosX - mouseOldX;
+            dy = mousePosY - mouseOldY;
+
+            camera.rotateX(dy * ROTATION_SPEED);
+            camera.rotateY(dx * ROTATION_SPEED);
+            ;
+            // }
+        });
+
+    }
+
+    /**
+     * Create keyboard handlers
+     * @param scene
+     */
+    private void handleKeyboard(Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            if(!event.isShiftDown()) {
+                switch (event.getCode()) {
+                    case W:
+                        camera.moveForward();
+                        break;
+                    case S:
+                        camera.moveBackward();
+                        break;
+                    case A:
+                        camera.moveLeft();
+                        break;
+                    case D:
+                        camera.moveRight();
+                        break;
+                    case SPACE:
+                        camera.moveUp();
+                        break;
+                    case CONTROL:
+                        camera.moveDown();
+                        break;
+                    case ESCAPE:
+                        System.exit(0);
+                        break;
+                }
+            }
+            else if(event.isShiftDown()){
+
+                if(event.isShiftDown() && event.getCode() == KeyCode.W){
+                    camera.moveForward(SHIFT_MULTIPLIER);
+                }
+                else if(event.isShiftDown() && event.getCode() == KeyCode.S){
+                    camera.moveBackward(SHIFT_MULTIPLIER);
+                }
+                else if(event.isShiftDown() && event.getCode() == KeyCode.A){
+                    camera.moveLeft(SHIFT_MULTIPLIER);
+                }
+                else if(event.isShiftDown() && event.getCode() == KeyCode.D){
+                    camera.moveRight(SHIFT_MULTIPLIER);
+                }
+                else if(event.isShiftDown() && event.getCode() == KeyCode.SPACE){
+                    camera.moveUp(SHIFT_MULTIPLIER);
+                }
+                else if(event.isShiftDown() && event.getCode() == KeyCode.CONTROL){
+                    camera.moveDown(20);
+                }
+            }
+        });
+    }
 
     private void moveCamera(Camera camera, double x, double y, double z) {
         // Get rotation transformations from camera
@@ -71,7 +183,6 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Group root = new Group();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
         scene.setFill(new ImagePattern(skyBackground));
@@ -92,54 +203,62 @@ public class Program extends Application {
         root.getChildren().add(wall);
 
 
-        Camera camera = new PerspectiveCamera(true);
-        camera.setFarClip(20_000);
-        camera.setTranslateZ(-800);
-        scene.setCamera(camera);
+//        Camera camera = new PerspectiveCamera(true);
+//        camera.setFarClip(20_000);
+//        camera.setTranslateZ(-800);
+//        scene.setCamera(camera);
+//
+//        Rotate cameraRotationX = new Rotate(0, Rotate.X_AXIS);
+//        Rotate cameraRotationY = new Rotate(0, Rotate.Y_AXIS);
+//
+//        camera.getTransforms().addAll(cameraRotationX, cameraRotationY);
+//
+//        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+//            switch (keyEvent.getCode()) {
+//                case W:
+//                    // glitched
+//                    moveCamera(camera, 0, 0, 50);
+//                    break;
+//                case S:
+//                    // glitched
+//                    moveCamera(camera, 0, 0, -50);
+//                    break;
+//                case A:
+//                    // glitched
+//                    moveCamera(camera, -50, 0, 0);
+//                    break;
+//                case D:
+//                    // glitched
+//                    moveCamera(camera, 50, 0, 0);
+//                    break;
+//                case UP:
+//                    // glitched
+//                    cameraRotationX.setAngle(cameraRotationX.getAngle() + 5);
+//                    normalizeRotation(cameraRotationX);
+//                    break;
+//                case DOWN:
+//                    // glitched
+//                    cameraRotationX.setAngle(cameraRotationX.getAngle() - 5);
+//                    normalizeRotation(cameraRotationX);
+//                    break;
+//                case RIGHT:
+//                    cameraRotationY.setAngle(cameraRotationY.getAngle() + 5);
+//                    normalizeRotation(cameraRotationY);
+//                    break;
+//                case LEFT:
+//                    cameraRotationY.setAngle(cameraRotationY.getAngle() - 5);
+//                    normalizeRotation(cameraRotationY);
+//                    break;
+//            }
+//        });
 
-        Rotate cameraRotationX = new Rotate(0, Rotate.X_AXIS);
-        Rotate cameraRotationY = new Rotate(0, Rotate.Y_AXIS);
 
-        camera.getTransforms().addAll(cameraRotationX, cameraRotationY);
+        buildCamera();
+        handleKeyboard(scene);
+        handleMouse(scene);
 
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
-            switch (keyEvent.getCode()) {
-                case W:
-                    // glitched
-                    moveCamera(camera, 0, 0, 50);
-                    break;
-                case S:
-                    // glitched
-                    moveCamera(camera, 0, 0, -50);
-                    break;
-                case A:
-                    // glitched
-                    moveCamera(camera, -50, 0, 0);
-                    break;
-                case D:
-                    // glitched
-                    moveCamera(camera, 50, 0, 0);
-                    break;
-                case UP:
-                    // glitched
-                    cameraRotationX.setAngle(cameraRotationX.getAngle() + 5);
-                    normalizeRotation(cameraRotationX);
-                    break;
-                case DOWN:
-                    // glitched
-                    cameraRotationX.setAngle(cameraRotationX.getAngle() - 5);
-                    normalizeRotation(cameraRotationX);
-                    break;
-                case RIGHT:
-                    cameraRotationY.setAngle(cameraRotationY.getAngle() + 5);
-                    normalizeRotation(cameraRotationY);
-                    break;
-                case LEFT:
-                    cameraRotationY.setAngle(cameraRotationY.getAngle() - 5);
-                    normalizeRotation(cameraRotationY);
-                    break;
-            }
-        });
+        scene.setCamera(camera.getCamera());
+
 
         stage.setTitle("JavaFX Stage");
         stage.setScene(scene);
