@@ -36,27 +36,37 @@ public class Program extends Application {
             }
         }
 
-        // Compute the rotation angles in radians
-        double cosY = Math.cos(Math.toRadians(rotateY.getAngle()));
+        double cosY = Math.cos(Math.toRadians(rotateX.getAngle()));
         double sinY = Math.sin(Math.toRadians(rotateY.getAngle()));
-
+        double cosX = Math.cos(Math.toRadians(rotateX.getAngle()));
         double sinX = Math.sin(Math.toRadians(rotateX.getAngle()));
 
-        // Adjust forward/backward movement based on camera orientation
+        // Forward/backward movement based on camera orientation (Y-axis rotation)
         double forwardX = z * sinY;
         double forwardZ = z * cosY;
 
-        // Adjust up/down movement based on the X-axis rotation (pitch)
-        double forwardY = z * sinX;
-
-        // Adjust strafing (left/right) movement based on Y-axis rotation (yaw)
+        // Left/right strafing based on camera orientation (Y-axis rotation)
         double strafeX = x * cosY;
         double strafeZ = x * -sinY;
 
+        // Adjust up/down movement based on X-axis rotation (pitch)
+        double moveY = y - z * sinX;
+
         // Apply the translation to the camera
         camera.setTranslateX(camera.getTranslateX() + strafeX + forwardX);
-        camera.setTranslateY(camera.getTranslateY() + y - forwardY); // Adjust Y movement
+        camera.setTranslateY(camera.getTranslateY() + moveY);
         camera.setTranslateZ(camera.getTranslateZ() + strafeZ + forwardZ);
+    }
+
+
+    private void normalizeRotation(Rotate rotation) {
+        double angle = rotation.getAngle() % 360;
+        if (angle > 180) {
+            angle -= 360;
+        } else if (angle < -180) {
+            angle += 360;
+        }
+        rotation.setAngle(angle);
     }
 
     @Override
@@ -95,28 +105,38 @@ public class Program extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
             switch (keyEvent.getCode()) {
                 case W:
+                    // glitched
                     moveCamera(camera, 0, 0, 50);
                     break;
                 case S:
+                    // glitched
                     moveCamera(camera, 0, 0, -50);
                     break;
                 case A:
+                    // glitched
                     moveCamera(camera, -50, 0, 0);
                     break;
                 case D:
+                    // glitched
                     moveCamera(camera, 50, 0, 0);
                     break;
                 case UP:
+                    // glitched
                     cameraRotationX.setAngle(cameraRotationX.getAngle() + 5);
+                    normalizeRotation(cameraRotationX);
                     break;
                 case DOWN:
+                    // glitched
                     cameraRotationX.setAngle(cameraRotationX.getAngle() - 5);
+                    normalizeRotation(cameraRotationX);
                     break;
                 case RIGHT:
                     cameraRotationY.setAngle(cameraRotationY.getAngle() + 5);
+                    normalizeRotation(cameraRotationY);
                     break;
                 case LEFT:
                     cameraRotationY.setAngle(cameraRotationY.getAngle() - 5);
+                    normalizeRotation(cameraRotationY);
                     break;
             }
         });
