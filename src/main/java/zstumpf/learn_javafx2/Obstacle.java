@@ -3,10 +3,19 @@ package zstumpf.learn_javafx2;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Box;
 
+/**
+ * An obstacle is a 3D shape that cannot be pathfinded through. Obstacles are rectangular prisms (JavaFX Box).
+ */
 public class Obstacle extends Box {
 
-    public Obstacle(double width, double height, double depth) {
-        super(width, height, depth);
+    public Obstacle(double translateX, double translateY, double translateZ, double width, double height, double depth) {
+        // super(width, height, depth);
+        this.setWidth(width);
+        this.setHeight(height);
+        this.setDepth(depth);
+        this.setTranslateX(translateX);
+        this.setTranslateY(translateY);
+        this.setTranslateZ(translateZ);
     }
 
     /**

@@ -121,23 +121,24 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Scene scene = new Scene(root, WIDTH, HEIGHT);
+        // Basic setup
+        Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
         scene.setFill(new ImagePattern(skyBackground));
 
-        Box baseplate = new Box(2000, 10, 2000);
-        baseplate.setTranslateY(200);
+        Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
         root.getChildren().add(baseplate);
+        // -----------
 
-        Sphere sphere1 = new Sphere(50);
-        root.getChildren().add(sphere1);
 
-        Target target = new Target();
-        target.setTranslateX(400);
-        root.getChildren().add(target);
 
-        Obstacle wall = new Obstacle(20, 300, 750);
-        wall.setTranslateX(200);
+        Target target0 = new Target(0, 0, 0);
+        root.getChildren().add(target0);
+
+        Target target1 = new Target(400, 0, 0);
+        root.getChildren().add(target1);
+
+        Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
         root.getChildren().add(wall);
 
 
@@ -146,7 +147,6 @@ public class Program extends Application {
         handleMouse(scene);
 
         scene.setCamera(camera.getCamera());
-
 
         stage.setTitle("JavaFX Stage");
         stage.setScene(scene);
