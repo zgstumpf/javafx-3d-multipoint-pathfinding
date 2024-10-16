@@ -5,10 +5,14 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Color;
 import javafx.geometry.Point3D;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A Target is a point or node that the pathfinder must visit at least once. It is visually represented by a small sphere.
  */
 public class Target extends Sphere {
+    public static List<Target> allTargets = new ArrayList<>();
 
     // The id, or identifier, is used to tell Targets apart.
     public final int id;
@@ -35,5 +39,16 @@ public class Target extends Sphere {
 
         // Set Point3D in center of Target
         this.point3D = new Point3D(this.getTranslateX(), this.getTranslateY(), this.getTranslateZ());
+
+        // Keep track of this target
+        allTargets.add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Target{" +
+                "id=" + id +
+                ", point3D=" + point3D.toString() +
+                '}';
     }
 }

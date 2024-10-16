@@ -23,3 +23,8 @@ Requires:
 This definition of obstacles works on rectangular prisms / Boxes
 May need a more sophisticated algorithm to take any javafx shape and determine if a point is inside it.
 But should probably just get it to work with Boxes for now.
+
+Since resulting shortest paths of targets likely won't change often, you can cache the results, and recalculate if targets are modified.
+Use 2nd part of pathfinding algorithm on cached results. When a target is modified, only update A star solutions where that target is a start or end target.
+
+Will this A* solution work if (target x, y, z % NEIGHBOR_DISTANCE != 0) ?

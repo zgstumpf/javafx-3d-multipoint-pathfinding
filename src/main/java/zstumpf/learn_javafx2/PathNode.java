@@ -26,10 +26,4 @@ public class PathNode extends Sphere {
         this.setMaterial(material);
     }
 
-    public static void renderPath(List<Point3D> path, Group group) {
-        for (Point3D point : path) {
-            PathNode pathNode = new PathNode(point.getX(), point.getY(), point.getZ());
-            group.getChildren().add(pathNode);
-        }
-    }
 }

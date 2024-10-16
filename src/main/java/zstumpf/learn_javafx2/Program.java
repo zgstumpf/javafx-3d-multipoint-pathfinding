@@ -16,7 +16,6 @@ import javafx.scene.transform.Rotate;
 import java.io.IOException;
 import java.util.List;
 
-
 public class Program extends Application {
     private final static double WIDTH = 1000;
     private final static double HEIGHT = 600;
@@ -143,10 +142,13 @@ public class Program extends Application {
         Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
         root.getChildren().add(wall);
 
-        System.out.println("Starting A*");
-        List<Point3D> shortestPath = AStarSearch.getShortestPath(target0, target1);
-        System.out.println(shortestPath.toString());
-        PathNode.renderPath(shortestPath, root);
+
+
+        Pathfinder.runAStar(Target.allTargets);
+
+        Pathfinder.printAStarSolutionMatrix();
+
+        Pathfinder.renderPath(Pathfinder.aStarSolutionMatrix[1][0].shortestPath, root);
 
         // Final setup instructions
         buildCamera();

@@ -39,13 +39,44 @@ public class AStarSearch {
         }
     }
 
+
+    /**
+     * Stores a single A* solution, which contains the shortest path and its total distance, for a pair of Targets.
+     */
+    public static class AStarSolution {
+        List<Point3D> shortestPath;
+        double totalDistance;
+        Target start;
+        Target end;
+
+        public AStarSolution(List<Point3D> shortestPath, double totalDistance, Target start, Target end) {
+            this.shortestPath = shortestPath;
+            this.totalDistance = totalDistance;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String toString() {
+            return "AStarSolution{" + "\n" +
+                    "\t" + "shortestPath=" + shortestPath.toString() + "\n" +
+                    "\t" + "totalDistance=" + totalDistance +
+                    ", start=" + start.toString() +
+                    ", end=" + end.toString() + "\n" +
+                    "}";
+        }
+
+        ;
+
+    }
+
     /**
      * Performs the A* search algorithm in 3D space between start and goal while avoiding obstacles.
      * @param start First Target instance. Where path starts.
      * @param goal Second Target instance. Where the path is aiming to end.
      * @return List of Point3D instances forming the shortest path. If List is empty, no path was found.
      */
-    public static List<Point3D> getShortestPath(Target start, Target goal) {
+    public static AStarSolution getShortestPath(Target start, Target goal) {
         Set<Point3D> closedSet = new HashSet<>();
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(Node::f));
         openSet.add(new Node(start.point3D, null, 0, getDistance(start.point3D, goal.point3D)));
@@ -55,7 +86,7 @@ public class AStarSearch {
 
             // current node has found the goal
             if (current.point.getX() == goal.point3D.getX() && current.point.getY() == goal.point3D.getY() && current.point.getZ() == goal.point3D.getZ()) {
-                return reconstructPath(current);
+                return new AStarSolution(reconstructPath(current), current.g, start, goal);
             }
 
             closedSet.add(current.point);
@@ -87,7 +118,7 @@ public class AStarSearch {
             }
         }
         // No path found
-        return new ArrayList<Point3D>();
+        return new AStarSolution(new ArrayList<Point3D>(), -1, start, goal);
     }
 
 
