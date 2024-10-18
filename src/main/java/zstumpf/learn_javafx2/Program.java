@@ -7,10 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
@@ -128,36 +125,36 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        BorderPane root = new BorderPane();
-            SplitPane splitPane = new SplitPane();
+        // Lines are indented to represent hierarchy in the scene graph.
+        SplitPane splitPane = new SplitPane();
 
-                // Label mapTitle = new Label("Map");
-                SubScene map3d = new SubScene(root3d, WIDTH / 2, HEIGHT, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
-                map3d.heightProperty().bind(splitPane.heightProperty()); // make subscene fill height of its parent
-                handleKeyboard(map3d);
-                handleMouse(map3d);
+            // For expected functionality, SplitPane requires that SubScene is inside a layout node, such as Pane.
+            Pane mapPane = new Pane();
+                Label mapTitle = new Label("Map");
+
+                // Values of width and height don't matter because these properties will be binded to map3D's container.
+                SubScene map3D = new SubScene(root3d, 0, 0, true, SceneAntialiasing.BALANCED);
+
+                map3D.heightProperty().bind(mapPane.heightProperty()); // make SubScene fill available height
+                map3D.widthProperty().bind(mapPane.widthProperty()); // make SubScene fill available width
+
+                handleKeyboard(map3D);
+                handleMouse(map3D);
                 buildCamera();
-                map3d.setCamera(camera.getCamera()); // perspective camera
-                //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
-                //map3d.setFill(new ImagePattern(skyBackground));
+                map3D.setCamera(camera.getCamera()); // perspective camera
 
-                // When program starts, inputs will be sent to map3d
-                map3d.requestFocus();
-                // Clicking map3d will give focus back to map3d
-                map3d.setOnMouseClicked(event -> {
-                    map3d.requestFocus();
-                });
+                // Send inputs to map3D on start and when map3D is clicked.
+                map3D.requestFocus();
+                map3D.setOnMouseClicked(event -> map3D.requestFocus());
+            mapPane.getChildren().addAll(map3D, mapTitle); // order of args puts mapTitle above map3d.
 
+            VBox distancesPane = new VBox();
+                Label distancesTitle = new Label("Distances");
+            distancesPane.getChildren().add(distancesTitle);
 
-                VBox distancesPane = new VBox();
-                    Label distancesTitle = new Label("Distances");
-                distancesPane.getChildren().add(distancesTitle);
+        splitPane.getItems().addAll(mapPane, distancesPane);
 
-            splitPane.getItems().addAll(map3d, distancesPane);
-        root.setCenter(splitPane);
-
-
-        Scene scene = new Scene(root, WIDTH, HEIGHT, true);
+        Scene scene = new Scene(splitPane, WIDTH, HEIGHT, true);
 
 
 
