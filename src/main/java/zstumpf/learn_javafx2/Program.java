@@ -8,6 +8,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
@@ -125,36 +128,37 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Basic setup
-        Group root = new Group();
+        BorderPane root = new BorderPane();
             SplitPane splitPane = new SplitPane();
-                AnchorPane mapPane = new AnchorPane();
-                    Label mapTitle = new Label("Map");
-                    SubScene map3d = new SubScene(root3d, 500, 500, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
-                    handleKeyboard(map3d);
-                    handleMouse(map3d);
-                    buildCamera();
-                    map3d.setCamera(camera.getCamera()); // perspective camera
-                    //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
-                    //map3d.setFill(new ImagePattern(skyBackground));
 
-                    // When program starts, inputs will be sent to map3d
+                // Label mapTitle = new Label("Map");
+                SubScene map3d = new SubScene(root3d, WIDTH / 2, HEIGHT, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
+                map3d.heightProperty().bind(splitPane.heightProperty()); // make subscene fill height of its parent
+                handleKeyboard(map3d);
+                handleMouse(map3d);
+                buildCamera();
+                map3d.setCamera(camera.getCamera()); // perspective camera
+                //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
+                //map3d.setFill(new ImagePattern(skyBackground));
+
+                // When program starts, inputs will be sent to map3d
+                map3d.requestFocus();
+                // Clicking map3d will give focus back to map3d
+                map3d.setOnMouseClicked(event -> {
                     map3d.requestFocus();
-                    // Clicking map3d will give focus back to map3d
-                    map3d.setOnMouseClicked(event -> {
-                        map3d.requestFocus();
-                    });
-                mapPane.getChildren().addAll(mapTitle, map3d);
+                });
 
-                AnchorPane distancesPane = new AnchorPane();
+
+                VBox distancesPane = new VBox();
                     Label distancesTitle = new Label("Distances");
                 distancesPane.getChildren().add(distancesTitle);
 
-            splitPane.getItems().addAll(mapPane, distancesPane);
-        root.getChildren().addAll(splitPane);
+            splitPane.getItems().addAll(map3d, distancesPane);
+        root.setCenter(splitPane);
 
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
+
 
 
         Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
