@@ -28,3 +28,24 @@ Since resulting shortest paths of targets likely won't change often, you can cac
 Use 2nd part of pathfinding algorithm on cached results. When a target is modified, only update A star solutions where that target is a start or end target.
 
 Will this A* solution work if (target x, y, z % NEIGHBOR_DISTANCE != 0) ?
+Will A* work if obstacle is too skinny, meaning nodes will skip over it?
+
+3D designer for docs: https://figuro.io/Designer
+
+- Look into NEIGHBOR_DISTANCE - Even a value of 25 causes Java Heap to run out of space, with just 2 targets.
+
+2nd Phase Thoughts
+- Find variant of TPS with start point, end point, and multiple waypoints that can be visited in any order
+  - This may be way too slow, so use a greedy algorithm.
+  - Maybe from any node, visit closest node in 3d space, ignoring obstacles.
+    - Problem occurs if map is like:
+      - o  o  o    o
+      - ------------
+      - o o o o
+    - Since algorithm may want to hop over the wall over and over, instead of doing 2 passes.
+    - So, maybe go to closest node that isnt blocked by obstacle - will need to modify a star solution to also store if path is blocked by obstacle
+    - If you run out of nodes that arent blocked, next step is
+        1. Method 1: Use A star distance table. From that point, go to next needed point with shortest distance in table. (Greedy)
+    - Greedy to solve whole problem: From starting point, visit node that has shortest distance in A star table. Repeat process until all needed nodes are visited. 
+    - Permutation way to solve whole problem: For small number of targets, try every permutation, pick path with shortest distance.
+    - Should use permutation for problems with few targets, and if many targets, switch to different algorithm.
