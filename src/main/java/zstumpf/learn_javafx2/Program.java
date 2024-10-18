@@ -3,8 +3,10 @@ package zstumpf.learn_javafx2;
 import javafx.application.Application;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
@@ -22,7 +24,7 @@ public class Program extends Application {
 
     private static final double SHIFT_MULTIPLIER = 60.0;
     private static final double ROTATION_SPEED = 0.1;
-    private final Group root = new Group();
+    private final Group root3d = new Group();
     private final Camera camera = new Camera();
 
     private double mousePosX;
@@ -36,7 +38,7 @@ public class Program extends Application {
      * add created {@link Camera} object to scene
      */
     private void buildCamera() {
-        root.getChildren().add(camera.getXForm());
+        root3d.getChildren().add(camera.getXForm());
     }
 
     /**
@@ -123,9 +125,22 @@ public class Program extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Basic setup
+        Group root = new Group();
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
-        Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
-        scene.setFill(new ImagePattern(skyBackground));
+        //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
+        //scene.setFill(new ImagePattern(skyBackground));
+
+        SplitPane splitPane = new SplitPane();
+            AnchorPane mapPane = new AnchorPane();
+                SubScene map3d = new SubScene(root3d, 500, 500, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
+                    map3d.setCamera(camera.getCamera()); // perspective camera
+            mapPane.getChildren().add(map3d);
+
+            AnchorPane distancesPane = new AnchorPane();
+        splitPane.getItems().addAll(mapPane, distancesPane);
+
+
+
 
         Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
         root.getChildren().add(baseplate);
@@ -144,17 +159,17 @@ public class Program extends Application {
 
 
 
-        Pathfinder.runAStar(Target.allTargets);
-
-        Pathfinder.printAStarSolutionMatrix();
-
-        Pathfinder.renderPath(Pathfinder.aStarSolutionMatrix[1][0].shortestPath, root);
+//        Pathfinder.runAStar(Target.allTargets);
+//
+//        Pathfinder.printAStarSolutionMatrix();
+//
+//        Pathfinder.renderPath(Pathfinder.aStarSolutionMatrix[1][0].shortestPath, root);
 
         // Final setup instructions
         buildCamera();
         handleKeyboard(scene);
         handleMouse(scene);
-        scene.setCamera(camera.getCamera());
+        //scene.setCamera(camera.getCamera());
         stage.setTitle("3D Multipoint Pathfinder");
         stage.setScene(scene);
         stage.show();

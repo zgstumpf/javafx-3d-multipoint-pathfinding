@@ -1,8 +1,8 @@
 On program start, it should render obstacles and targets
 
-2 Tabs
-First tab is Map : shows 3d map
-Second tab is Distances
+2 split panes
+First pane is Map : shows 3d map
+Second pane is Distances
 - Shows table of shortest distance between every target. Column/Row labels are Target IDs. Target IDs should also be toggleable to be visible in the map.
 - Has Button "Calculate All", that does A* between all nodes and fills in table as results are calculated.
 - Or, user can click empty cell to make toolbar appear. One option is "Calculate this path", which finds the path between the two nodes shared by that cell.
