@@ -3,6 +3,7 @@ package zstumpf.learn_javafx2;
 import javafx.application.Application;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -45,7 +46,7 @@ public class Program extends Application {
      * Create mouse handlers
      * @param scene
      */
-    private void handleMouse(Scene scene){
+    private void handleMouse(SubScene scene){
 
         scene.setOnMousePressed(event -> {
             mousePosX = event.getSceneX();
@@ -70,7 +71,7 @@ public class Program extends Application {
      * Create keyboard handlers
      * @param scene
      */
-    private void handleKeyboard(Scene scene) {
+    private void handleKeyboard(SubScene scene) {
         scene.setOnKeyPressed(event -> {
             if(!event.isShiftDown()) {
                 switch (event.getCode()) {
@@ -126,36 +127,50 @@ public class Program extends Application {
     public void start(Stage stage) throws IOException {
         // Basic setup
         Group root = new Group();
-        Scene scene = new Scene(root, WIDTH, HEIGHT, true);
-        //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
-        //scene.setFill(new ImagePattern(skyBackground));
-
-        SplitPane splitPane = new SplitPane();
-            AnchorPane mapPane = new AnchorPane();
-                SubScene map3d = new SubScene(root3d, 500, 500, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
+            SplitPane splitPane = new SplitPane();
+                AnchorPane mapPane = new AnchorPane();
+                    Label mapTitle = new Label("Map");
+                    SubScene map3d = new SubScene(root3d, 500, 500, true, SceneAntialiasing.BALANCED); // "root3d" will store 3d objects for now
+                    handleKeyboard(map3d);
+                    handleMouse(map3d);
+                    buildCamera();
                     map3d.setCamera(camera.getCamera()); // perspective camera
-            mapPane.getChildren().add(map3d);
+                    //Image skyBackground = new Image(getClass().getResourceAsStream("/images/sky.png"));
+                    //map3d.setFill(new ImagePattern(skyBackground));
 
-            AnchorPane distancesPane = new AnchorPane();
-        splitPane.getItems().addAll(mapPane, distancesPane);
+                    // When program starts, inputs will be sent to map3d
+                    map3d.requestFocus();
+                    // Clicking map3d will give focus back to map3d
+                    map3d.setOnMouseClicked(event -> {
+                        map3d.requestFocus();
+                    });
+                mapPane.getChildren().addAll(mapTitle, map3d);
+
+                AnchorPane distancesPane = new AnchorPane();
+                    Label distancesTitle = new Label("Distances");
+                distancesPane.getChildren().add(distancesTitle);
+
+            splitPane.getItems().addAll(mapPane, distancesPane);
+        root.getChildren().addAll(splitPane);
 
 
+        Scene scene = new Scene(root, WIDTH, HEIGHT, true);
 
 
         Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
-        root.getChildren().add(baseplate);
+        root3d.getChildren().add(baseplate);
         // -----------
 
 
 
         Target target0 = new Target(1, 0, 0, 0);
-        root.getChildren().add(target0);
+        root3d.getChildren().add(target0);
 
         Target target1 = new Target(2, 400, 0, 0);
-        root.getChildren().add(target1);
+        root3d.getChildren().add(target1);
 
         Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
-        root.getChildren().add(wall);
+        root3d.getChildren().add(wall);
 
 
 
@@ -166,10 +181,6 @@ public class Program extends Application {
 //        Pathfinder.renderPath(Pathfinder.aStarSolutionMatrix[1][0].shortestPath, root);
 
         // Final setup instructions
-        buildCamera();
-        handleKeyboard(scene);
-        handleMouse(scene);
-        //scene.setCamera(camera.getCamera());
         stage.setTitle("3D Multipoint Pathfinder");
         stage.setScene(scene);
         stage.show();
