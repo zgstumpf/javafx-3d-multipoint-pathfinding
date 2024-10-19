@@ -44,6 +44,16 @@ public class Target extends Sphere {
         allTargets.add(this);
     }
 
+    public static void renderAllIds(boolean render) {
+        for (Target target : Target.allTargets) {
+            target.renderId(render);
+        }
+    }
+
+    public void renderId(boolean render) {
+
+    }
+
     @Override
     public String toString() {
         return "Target{" +

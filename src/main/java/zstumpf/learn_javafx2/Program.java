@@ -1,8 +1,12 @@
 package zstumpf.learn_javafx2;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
@@ -125,6 +129,22 @@ public class Program extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        // Move this stuff later
+        Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
+        root3d.getChildren().add(baseplate);
+
+        Target target0 = new Target(1, 0, 0, 0);
+        root3d.getChildren().add(target0);
+
+        Target target1 = new Target(2, 400, 0, 0);
+        root3d.getChildren().add(target1);
+
+        Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
+        root3d.getChildren().add(wall);
+        // .......
+
+
+
         // Lines are indented to represent hierarchy in the scene graph.
         SplitPane splitPane = new SplitPane();
 
@@ -150,28 +170,39 @@ public class Program extends Application {
 
             VBox distancesPane = new VBox();
                 Label distancesTitle = new Label("Distances");
-            distancesPane.getChildren().add(distancesTitle);
+
+                CheckBox showTargetIDsCheckBox = new CheckBox("Show target IDs");
+                showTargetIDsCheckBox.setSelected(true);
+                showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> Target.renderAllIds(newValue));
+
+                GridPane distancesTable = new GridPane();
+                distancesTable.setGridLinesVisible(true);
+                for (int i = 0; i < Target.allTargets.size(); i++) {
+                    Target target = Target.allTargets.get(i);
+
+                    // Even though Labels contain the same information, they must be separate nodes
+                    // to be added to two different spots in the GridPane.
+                    Label targetLabelTopRow = new Label(String.valueOf(target.id));
+                    Label targetLabelLeftCol = new Label(String.valueOf(target.id));
+
+                    // 10px padding on all sides
+                    targetLabelTopRow.setPadding(new Insets(10));
+                    targetLabelLeftCol.setPadding(new Insets(10));
+
+                    // Top row. i+1 leaves first cell in top left corner blank
+                    distancesTable.add(targetLabelTopRow, i+1, 0);
+
+                    // Leftmost column
+                    distancesTable.add(targetLabelLeftCol, 0, i+1);
+                }
+
+            distancesPane.getChildren().addAll(distancesTitle, showTargetIDsCheckBox, distancesTable);
 
         splitPane.getItems().addAll(mapPane, distancesPane);
 
         Scene scene = new Scene(splitPane, WIDTH, HEIGHT, true);
 
 
-
-        Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
-        root3d.getChildren().add(baseplate);
-        // -----------
-
-
-
-        Target target0 = new Target(1, 0, 0, 0);
-        root3d.getChildren().add(target0);
-
-        Target target1 = new Target(2, 400, 0, 0);
-        root3d.getChildren().add(target1);
-
-        Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
-        root3d.getChildren().add(wall);
 
 
 
