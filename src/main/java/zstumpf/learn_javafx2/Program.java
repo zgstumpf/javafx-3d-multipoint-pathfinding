@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -176,13 +177,17 @@ public class Program extends Application {
             VBox distancesPane = new VBox();
                 Label distancesTitle = new Label("Distances");
 
-                CheckBox showTargetIDsCheckBox = new CheckBox("Show target IDs");
-                showTargetIDsCheckBox.setSelected(true); // Default state is checked
+                CheckBox targetNamesCheckBox = new CheckBox("Show target names");
+                targetNamesCheckBox.setSelected(true); // Default state is checked
 
                 // User can click checkbox to toggle rendered labels
-                showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                targetNamesCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                     Target.renderLabelAll(newValue, map3D, targetLabels);
                 });
+
+                CheckBox showDiagnosticsCheckBox = new CheckBox("Show diagnostics");
+
+                CheckBox pathfindingInActionCheckBox = new CheckBox("See pathfinding in action");
 
                 GridPane distancesTable = new GridPane();
                 distancesTable.setGridLinesVisible(true);
@@ -205,7 +210,9 @@ public class Program extends Application {
                     distancesTable.add(targetLabelLeftCol, 0, i+1);
                 }
 
-            distancesPane.getChildren().addAll(distancesTitle, showTargetIDsCheckBox, distancesTable);
+                Button calculateAllButton = new Button("Calculate all");
+
+            distancesPane.getChildren().addAll(distancesTitle, targetNamesCheckBox, showDiagnosticsCheckBox, pathfindingInActionCheckBox, calculateAllButton, distancesTable);
 
         splitPane.getItems().addAll(mapPane, distancesPane);
         Scene scene = new Scene(splitPane, WIDTH, HEIGHT, true);
@@ -236,13 +243,13 @@ public class Program extends Application {
         // movements. The behavior is complicated, read about it here, if you want: https://docs.oracle.com/javafx/2/events/processing.htm
         // Re-render the labels if the camera is rotated (by dragging).
         map3D.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
-            if (showTargetIDsCheckBox.selectedProperty().get()) {
+            if (targetNamesCheckBox.selectedProperty().get()) {
                 Target.renderLabelAll(true, map3D, targetLabels);
             }
         });
         // Re-render the labels if the camera is moved (WASD or Space/Control)
         map3D.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (showTargetIDsCheckBox.selectedProperty().get()) {
+            if (targetNamesCheckBox.selectedProperty().get()) {
                 switch (event.getCode()) {
                     // Fall-through if any cases are matched.
                     case W:
