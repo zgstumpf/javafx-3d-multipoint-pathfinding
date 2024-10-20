@@ -115,7 +115,7 @@ public class Camera {
     }
 
     /**
-     * Generate camera by defaul constructor and set inversed rotation
+     * Generate camera by default constructor and set inversed rotation
      * @see #Camera()
      * @param invertRotations if rotation should be applied with inversion
      */
@@ -278,6 +278,13 @@ public class Camera {
     public void rotateZ(double angle){
         xForm.setRotateZ(xForm.rz.getAngle() + getRotationDirection() * angle);
 
+    }
+
+    /**
+     * Resets the camera's position and rotation to how it is when the application starts.
+     */
+    public void resetCamera() {
+        xForm.reset();
     }
 
 }

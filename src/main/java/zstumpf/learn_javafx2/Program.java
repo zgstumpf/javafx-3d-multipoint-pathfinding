@@ -120,6 +120,10 @@ public class Program extends Application {
         });
     }
 
+    private void resetCamera() {
+
+    }
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -172,7 +176,9 @@ public class Program extends Application {
                 Pane targetLabels = new Pane();
                 targetLabels.setMouseTransparent(true); // Mouse clicks "go through" labels pane to 3D subscene
 
-            mapPane.getChildren().addAll(map3D, targetLabels, mapTitle);
+                Button homeButton = new Button("Home");
+                StackPane.setAlignment(homeButton, Pos.BOTTOM_RIGHT);
+            mapPane.getChildren().addAll(map3D, targetLabels, mapTitle, homeButton);
 
             VBox distancesPane = new VBox();
                 Label distancesTitle = new Label("Distances");
@@ -239,7 +245,7 @@ public class Program extends Application {
 
         // If the user moves the camera, targets may appear to move from their original screen positions,
         // which may cause their labels to no longer be in the right spots.
-        // NOTE: addEventFilter prevents screen from freezing due to blocking the event listeners for camera
+        // NOTE: addEventFilter prevents screen from freezing due to blocking map3D's event listeners for camera
         // movements. The behavior is complicated, read about it here, if you want: https://docs.oracle.com/javafx/2/events/processing.htm
         // Re-render the labels if the camera is rotated (by dragging).
         map3D.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
@@ -260,6 +266,14 @@ public class Program extends Application {
                     case CONTROL:
                         Target.renderLabelAll(true, map3D, targetLabels);
                 }
+            }
+        });
+
+        // Re-render labels if camera is moved by pressing Home button.
+        homeButton.setOnMouseClicked((event) -> {
+            camera.resetCamera();
+            if (targetNamesCheckBox.selectedProperty().get()) {
+                Target.renderLabelAll(true, map3D, targetLabels);
             }
         });
 
