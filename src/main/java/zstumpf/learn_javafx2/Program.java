@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -12,6 +13,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Sphere;
@@ -136,8 +138,8 @@ public class Program extends Application {
         Target target0 = new Target(1, 0, 0, 0);
         root3d.getChildren().add(target0);
 
-        Target target1 = new Target(2, 400, 0, 0);
-        root3d.getChildren().add(target1);
+//        Target target1 = new Target(2, 400, 0, 0);
+//        root3d.getChildren().add(target1);
 
         Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
         root3d.getChildren().add(wall);
@@ -149,14 +151,20 @@ public class Program extends Application {
         SplitPane splitPane = new SplitPane();
 
             // For expected functionality, SplitPane requires that SubScene is inside a layout node, such as Pane.
-            Pane mapPane = new Pane();
+            StackPane mapPane = new StackPane();
+            mapPane.setMinWidth(0);
+
                 Label mapTitle = new Label("Map");
+                StackPane.setAlignment(mapTitle, Pos.TOP_LEFT);
 
                 // Values of width and height don't matter because these properties will be binded to map3D's container.
                 SubScene map3D = new SubScene(root3d, 0, 0, true, SceneAntialiasing.BALANCED);
 
                 map3D.heightProperty().bind(mapPane.heightProperty()); // make SubScene fill available height
                 map3D.widthProperty().bind(mapPane.widthProperty()); // make SubScene fill available width
+
+                // Giving a SubScene a fill enables mouse events to register when clicking/dragging the "sky"
+                map3D.setFill(Color.TRANSPARENT);
 
                 handleKeyboard(map3D);
                 handleMouse(map3D);
@@ -166,14 +174,23 @@ public class Program extends Application {
                 // Send inputs to map3D on start and when map3D is clicked.
                 map3D.requestFocus();
                 map3D.setOnMouseClicked(event -> map3D.requestFocus());
-            mapPane.getChildren().addAll(map3D, mapTitle); // order of args puts mapTitle above map3d.
+
+                // This pane displays 2d labels for targets.
+                // It will be placed on top of the 3d SubScene.
+                Pane targetLabels = new Pane();
+                targetLabels.setMouseTransparent(true); // Mouse clicks "go through" labels pane to 3D subscene
+            mapPane.getChildren().addAll(map3D, targetLabels, mapTitle);
 
             VBox distancesPane = new VBox();
                 Label distancesTitle = new Label("Distances");
 
                 CheckBox showTargetIDsCheckBox = new CheckBox("Show target IDs");
                 showTargetIDsCheckBox.setSelected(true);
-                showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> Target.renderAllIds(newValue));
+                showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    for (Target target : Target.allTargets) {
+                        target.renderId(newValue, map3D, camera, targetLabels);
+                    }
+                });
 
                 GridPane distancesTable = new GridPane();
                 distancesTable.setGridLinesVisible(true);

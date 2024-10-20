@@ -51,7 +51,10 @@ public class XForm extends Group {
         XYZ, XZY, YXZ, YZX, ZXY, ZYX
     }
 
+    // Stores current state of camera's translation (position in 3D space) data,
+    // providing access to methods such as getX().
     public Translate t  = new Translate();
+
     public Translate p = new Translate();
     public Translate ip = new Translate();
     public Rotate rx = new Rotate();
