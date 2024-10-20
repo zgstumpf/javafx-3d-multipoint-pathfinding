@@ -171,31 +171,6 @@ public class Program extends Application {
                 Pane targetLabels = new Pane();
                 targetLabels.setMouseTransparent(true); // Mouse clicks "go through" labels pane to 3D subscene
 
-                // If the user moves the camera, targets may appear to move from their original screen positions,
-                // which may cause their labels to no longer be in the right spots.
-                // NOTE: addEventFilter prevents screen from freezing due to blocking the event listeners for camera
-                // movements. The behavior is complicated, read about it here, if you want: https://docs.oracle.com/javafx/2/events/processing.htm
-                // Re-render the labels if the camera is rotated (by dragging).
-                map3D.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
-                    for (Target target : Target.allTargets) {
-                        target.renderLabel(true, map3D, targetLabels);
-                    }
-                });
-                // Re-render the labels if the camera is moved (WASD or Space/Control)
-                map3D.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    switch (event.getCode()) {
-                        // Fall-through if any cases are matched.
-                        case W:
-                        case A:
-                        case S:
-                        case D:
-                        case SPACE:
-                        case CONTROL:
-                            for (Target target : Target.allTargets) {
-                                target.renderLabel(true, map3D, targetLabels);
-                            }
-                    }
-                });
             mapPane.getChildren().addAll(map3D, targetLabels, mapTitle);
 
             VBox distancesPane = new VBox();
@@ -206,9 +181,7 @@ public class Program extends Application {
 
                 // User can click checkbox to toggle rendered labels
                 showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    for (Target target : Target.allTargets) {
-                        target.renderLabel(newValue, map3D, targetLabels);
-                    }
+                    Target.renderLabelAll(newValue, map3D, targetLabels);
                 });
 
                 GridPane distancesTable = new GridPane();
@@ -254,8 +227,32 @@ public class Program extends Application {
         // stage.setOnShown renders labels after all node positioning is computed, which ensures labels
         // are in the right locations.
         stage.setOnShown(event -> {
-            for (Target target : Target.allTargets) {
-                target.renderLabel(true, map3D, targetLabels);
+            Target.renderLabelAll(true, map3D, targetLabels);
+        });
+
+        // If the user moves the camera, targets may appear to move from their original screen positions,
+        // which may cause their labels to no longer be in the right spots.
+        // NOTE: addEventFilter prevents screen from freezing due to blocking the event listeners for camera
+        // movements. The behavior is complicated, read about it here, if you want: https://docs.oracle.com/javafx/2/events/processing.htm
+        // Re-render the labels if the camera is rotated (by dragging).
+        map3D.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+            if (showTargetIDsCheckBox.selectedProperty().get()) {
+                Target.renderLabelAll(true, map3D, targetLabels);
+            }
+        });
+        // Re-render the labels if the camera is moved (WASD or Space/Control)
+        map3D.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (showTargetIDsCheckBox.selectedProperty().get()) {
+                switch (event.getCode()) {
+                    // Fall-through if any cases are matched.
+                    case W:
+                    case A:
+                    case S:
+                    case D:
+                    case SPACE:
+                    case CONTROL:
+                        Target.renderLabelAll(true, map3D, targetLabels);
+                }
             }
         });
 

@@ -54,9 +54,11 @@ public class Target extends Sphere {
     }
 
     /**
-     * Show the target's id on the map.
-     * @param render
-     * @param map3D
+     * Controls visibility of the target's label on the map.
+     * @param render true to make label visible; false to make label invisible.
+     * @param map3D The SubScene containing the target.
+     * @param labelPane The Pane that has labels as children. This Pane must overlap the SubScene, so
+     *                  any labels on the Pane will also appear to be on the SubScene.
      */
     public void renderLabel(boolean render, SubScene map3D, Pane labelPane) {
         // Some of the code in this method is modified code from the following source:
@@ -151,6 +153,15 @@ public class Target extends Sphere {
         if (!labelExists) {
             // Label has not been added to scene yet, so add it.
             labelPane.getChildren().add(this.label);
+        }
+    }
+
+    /**
+     * Calls {@link #renderLabel(boolean, SubScene, Pane) renderLabel} for all targets on the map.
+     */
+    public static void renderLabelAll(boolean render, SubScene map3D, Pane labelPane) {
+        for (Target target : Target.allTargets) {
+            target.renderLabel(render, map3D, labelPane);
         }
     }
 
