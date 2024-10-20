@@ -1,29 +1,18 @@
 package zstumpf.learn_javafx2;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.shape.Sphere;
-import javafx.scene.shape.Box;
-import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-import javafx.scene.transform.Rotate;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Program extends Application {
     private final static double WIDTH = 1000;
@@ -152,7 +141,7 @@ public class Program extends Application {
 
             // For expected functionality, SplitPane requires that SubScene is inside a layout node, such as Pane.
             StackPane mapPane = new StackPane();
-            mapPane.setMinWidth(0);
+            mapPane.setMinWidth(0); // Fix bug where mapPane will expand but not shrink.
 
                 Label mapTitle = new Label("Map");
                 StackPane.setAlignment(mapTitle, Pos.TOP_LEFT);
@@ -185,10 +174,12 @@ public class Program extends Application {
                 Label distancesTitle = new Label("Distances");
 
                 CheckBox showTargetIDsCheckBox = new CheckBox("Show target IDs");
-                showTargetIDsCheckBox.setSelected(true);
+                showTargetIDsCheckBox.setSelected(true); // Default state is checked
+
+                // User can click checkbox to toggle rendered labels
                 showTargetIDsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                     for (Target target : Target.allTargets) {
-                        target.renderId(newValue, map3D, camera, targetLabels);
+                        target.renderId(newValue, map3D, targetLabels);
                     }
                 });
 
@@ -216,9 +207,7 @@ public class Program extends Application {
             distancesPane.getChildren().addAll(distancesTitle, showTargetIDsCheckBox, distancesTable);
 
         splitPane.getItems().addAll(mapPane, distancesPane);
-
         Scene scene = new Scene(splitPane, WIDTH, HEIGHT, true);
-
 
 
 
@@ -232,6 +221,16 @@ public class Program extends Application {
         // Final setup instructions
         stage.setTitle("3D Multipoint Pathfinder");
         stage.setScene(scene);
+
+        // Since default "show labels" checkbox state is checked, when application starts, render all labels.
+        // stage.setOnShown renders labels after all node positioning is computed, which ensures labels
+        // are in the right locations.
+        stage.setOnShown(event -> {
+            for (Target target : Target.allTargets) {
+                target.renderId(true, map3D, targetLabels);
+            }
+        });
+
         stage.show();
     }
 

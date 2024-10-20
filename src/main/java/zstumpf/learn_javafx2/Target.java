@@ -1,6 +1,5 @@
 package zstumpf.learn_javafx2;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
@@ -9,8 +8,6 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Color;
 import javafx.geometry.Point3D;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
@@ -61,7 +58,7 @@ public class Target extends Sphere {
      * @param render
      * @param map3D
      */
-    public void renderId(boolean render, SubScene map3D, Camera camera, Pane labelPane) {
+    public void renderId(boolean render, SubScene map3D, Pane labelPane) {
         /**
          * FloatingLabels.java
          *
@@ -114,7 +111,6 @@ public class Target extends Sphere {
                 x = 0;
             }
 
-
             //is it right of the view?
             if(x + this.label.getWidth() + 5 > map3D.getWidth()) {
                 x = map3D.getWidth() - (this.label.getWidth() + 5);
@@ -140,7 +136,6 @@ public class Target extends Sphere {
             for (Node node : labelPane.getChildren()) {
                 // Not all nodes in labelPane are guaranteed to be Labels.
                 if (node instanceof Label) {
-
                     Label currentLabel = (Label) node;
 
                     // This node is a Label, but is it this target's Label?
