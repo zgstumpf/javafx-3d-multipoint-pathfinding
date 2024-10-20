@@ -1,6 +1,9 @@
-
+// Some of this code is modified code from the following source:
+// https://docs.oracle.com/javafx/8/3d_graphics/Xform.java.html
+//
+// The license for that source is below.
 /*
- * Copyright (c) 2013, 2014 Oracle and/or its affiliates.
+ * Copyright (c) 2013 Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
  * This file is available and licensed under the following license:
@@ -40,10 +43,7 @@ import javafx.scene.transform.Translate;
 
 
 /**
- * Additional class for Group manipulation
- * used for more friendly movement and rotation scene nodes
- * @see <a href="https://docs.oracle.com/javafx/8/3d_graphics/jfxpub-3d_graphics.htm">Oracle Javafx 3D Tutorial</a>
- *
+ * Handles transforms used for camera movement and rotation
  */
 public class XForm extends Group {
 

@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -18,115 +17,15 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Program extends Application {
-    private final static double WIDTH = 1000;
-    private final static double HEIGHT = 600;
+    private final static double SCENE_WIDTH = 1000;
+    private final static double SCENE_HEIGHT = 600;
 
-    private static final double SHIFT_MULTIPLIER = 60.0;
-    private static final double ROTATION_SPEED = 0.1;
-    private final Group root3d = new Group();
-    private final Camera camera = new Camera();
-
-    private double mousePosX;
-    private double mousePosY;
-    private double mouseOldX;
-    private double mouseOldY;
-    private double dx;
-    private double dy;
-
-    /**
-     * add created {@link Camera} object to scene
-     */
-    private void buildCamera() {
-        root3d.getChildren().add(camera.getXForm());
-    }
-
-    /**
-     * Create mouse handlers
-     * @param scene
-     */
-    private void handleMouse(SubScene scene){
-
-        scene.setOnMousePressed(event -> {
-            mousePosX = event.getSceneX();
-            mousePosY = event.getSceneY();
-        });
-
-        scene.setOnMouseDragged(event -> {
-            mouseOldX = mousePosX;
-            mouseOldY = mousePosY;
-            mousePosX = event.getSceneX();
-            mousePosY = event.getSceneY();
-            dx = mousePosX - mouseOldX;
-            dy = mousePosY - mouseOldY;
-
-            camera.rotateX(dy * ROTATION_SPEED);
-            camera.rotateY(dx * ROTATION_SPEED);
-        });
-
-    }
-
-    /**
-     * Create keyboard handlers
-     * @param scene
-     */
-    private void handleKeyboard(SubScene scene) {
-        scene.setOnKeyPressed(event -> {
-            if(!event.isShiftDown()) {
-                switch (event.getCode()) {
-                    case W:
-                        camera.moveForward();
-                        break;
-                    case S:
-                        camera.moveBackward();
-                        break;
-                    case A:
-                        camera.moveLeft();
-                        break;
-                    case D:
-                        camera.moveRight();
-                        break;
-                    case SPACE:
-                        camera.moveUp();
-                        break;
-                    case CONTROL:
-                        camera.moveDown();
-                        break;
-                    case ESCAPE:
-                        System.exit(0);
-                        break;
-                }
-            }
-            else if(event.isShiftDown()){
-
-                if(event.isShiftDown() && event.getCode() == KeyCode.W){
-                    camera.moveForward(SHIFT_MULTIPLIER);
-                }
-                else if(event.isShiftDown() && event.getCode() == KeyCode.S){
-                    camera.moveBackward(SHIFT_MULTIPLIER);
-                }
-                else if(event.isShiftDown() && event.getCode() == KeyCode.A){
-                    camera.moveLeft(SHIFT_MULTIPLIER);
-                }
-                else if(event.isShiftDown() && event.getCode() == KeyCode.D){
-                    camera.moveRight(SHIFT_MULTIPLIER);
-                }
-                else if(event.isShiftDown() && event.getCode() == KeyCode.SPACE){
-                    camera.moveUp(SHIFT_MULTIPLIER);
-                }
-                else if(event.isShiftDown() && event.getCode() == KeyCode.CONTROL){
-                    camera.moveDown(20);
-                }
-            }
-        });
-    }
-
-    private void resetCamera() {
-
-    }
-
+    // Camera for 3D SubScene
+    private final FirstPersonCamera camera = new FirstPersonCamera();
 
     @Override
     public void start(Stage stage) throws IOException {
+        Group root3d = new Group();
         // Move this stuff later
         Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
         root3d.getChildren().add(baseplate);
@@ -162,9 +61,8 @@ public class Program extends Application {
                 // Giving a SubScene a fill enables mouse events to register when clicking/dragging the "sky"
                 map3D.setFill(Color.TRANSPARENT);
 
-                handleKeyboard(map3D);
-                handleMouse(map3D);
-                buildCamera();
+                camera.handleKeyboardInputs(map3D);
+                camera.handleMouseInputs(map3D);
                 map3D.setCamera(camera.getCamera()); // perspective camera
 
                 // Send inputs to map3D on start and when map3D is clicked.
@@ -221,7 +119,7 @@ public class Program extends Application {
             distancesPane.getChildren().addAll(distancesTitle, targetNamesCheckBox, showDiagnosticsCheckBox, pathfindingInActionCheckBox, calculateAllButton, distancesTable);
 
         splitPane.getItems().addAll(mapPane, distancesPane);
-        Scene scene = new Scene(splitPane, WIDTH, HEIGHT, true);
+        Scene scene = new Scene(splitPane, SCENE_WIDTH, SCENE_HEIGHT, true);
 
 
 

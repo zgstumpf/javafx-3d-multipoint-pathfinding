@@ -1,3 +1,7 @@
+// Some of this code is modified code from the following source:
+// https://github.com/vvoZokk/c-space-processing/:
+//
+// The license for that source is below.
 /*
 MIT License
 
@@ -26,20 +30,21 @@ SOFTWARE.
 package zstumpf.learn_javafx2;
 
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.SubScene;
 
 /**
  * Class for 3D space camera presenting.
  * Presents PerspectiveCamera node in a scene with defined
  * far clip, near clip and field of view.
  * W,S,A,D, Ctrl, Space used for movement on a scene.
- * Mouse dragging(while presse) used for rotation on a scene.
+ * Mouse dragging (while pressed) used for rotation on a scene.
  * SHIFT modifier can be used to increase step modifier
  *
- * @author      Vladislav Khakin
- * @version     %I%, %G%
+ * @author      Vladislav Khakin, Zach Stumpf
+ * @see XForm
  * @see PerspectiveCamera
  */
-public class Camera {
+public class FirstPersonCamera {
     private XForm xForm;
     private PerspectiveCamera camera;
     private boolean invertRotations = false;
@@ -49,6 +54,18 @@ public class Camera {
     private final double CAMERA_FAR_CLIP = 10000.0;
     private final double CAMERA_MOVEMENT_UNIT = 25;
     private final double Z_POSITION = -1000;
+
+    // Movement multiplier applied when user holds down Shift
+    private static final double SHIFT_MULTIPLIER = 60.0;
+
+    // These fields store data on mouse dragging for camera rotation
+    private double mousePosX;
+    private double mousePosY;
+    private double mouseOldX;
+    private double mouseOldY;
+    private double dx;
+    private double dy;
+    private static final double ROTATION_SPEED = 0.1;
 
 
     // return 1 if invertRotations else -1
@@ -98,12 +115,12 @@ public class Camera {
 
 
     /**
-     * Default constructor for Camera creation.
-     * Set field of view, nead and far clips,create
+     * Default constructor.
+     * Set field of view, near and far clips, create
      * scene node and link Perspective camera with it
-     * Use defaul rotation (not inversed)
+     * Use default rotation (not inverse)
      */
-    public Camera(){
+    public FirstPersonCamera(){
         camera = new PerspectiveCamera(true);
         camera.setTranslateZ(Z_POSITION);
         camera.setFieldOfView(FIELD_OF_VIEW);
@@ -116,10 +133,10 @@ public class Camera {
 
     /**
      * Generate camera by default constructor and set inversed rotation
-     * @see #Camera()
+     * @see #FirstPersonCamera()
      * @param invertRotations if rotation should be applied with inversion
      */
-    public Camera(boolean invertRotations){
+    public FirstPersonCamera(boolean invertRotations){
         super();
         this.invertRotations = invertRotations;
     }
@@ -285,6 +302,92 @@ public class Camera {
      */
     public void resetCamera() {
         xForm.reset();
+    }
+
+    /**
+     * Makes the subScene's camera move when there are keyboard inputs, such as WASD, Space (Up), Control (Down),
+     * and Escape (Exit application).
+     * @param subScene SubScene containing 3D elements and camera
+     */
+    // NOTE: You could make this work if you wanted to use argument of type Scene.
+    public void handleKeyboardInputs(SubScene subScene) {
+        subScene.setOnKeyPressed(event -> {
+            if(!event.isShiftDown()) {
+                // Normal movements
+                switch (event.getCode()) {
+                    case W:
+                        this.moveForward();
+                        break;
+                    case S:
+                        this.moveBackward();
+                        break;
+                    case A:
+                        this.moveLeft();
+                        break;
+                    case D:
+                        this.moveRight();
+                        break;
+                    case SPACE:
+                        this.moveUp();
+                        break;
+                    case CONTROL:
+                        this.moveDown();
+                        break;
+                    case ESCAPE:
+                        System.exit(0);
+                        break;
+                }
+            }
+            else {
+                // Shift is held down - accelerate movements
+                switch (event.getCode()) {
+                    case W:
+                        this.moveForward(SHIFT_MULTIPLIER);
+                        break;
+                    case S:
+                        this.moveBackward(SHIFT_MULTIPLIER);
+                        break;
+                    case A:
+                        this.moveLeft(SHIFT_MULTIPLIER);
+                        break;
+                    case D:
+                        this.moveRight(SHIFT_MULTIPLIER);
+                        break;
+                    case SPACE:
+                        this.moveUp(SHIFT_MULTIPLIER);
+                        break;
+                    case CONTROL:
+                        this.moveDown(20);
+                        break;
+                }
+            }
+        });
+    }
+
+
+    /**
+     * Makes the subScene's camera rotate when the camera is dragged.
+     * @param subScene SubScene containing 3D elements and camera
+     */
+    // NOTE: You could make this work if you wanted to use argument of type Scene.
+    public void handleMouseInputs(SubScene subScene){
+        subScene.setOnMousePressed(event -> {
+            mousePosX = event.getSceneX();
+            mousePosY = event.getSceneY();
+        });
+
+        subScene.setOnMouseDragged(event -> {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = event.getSceneX();
+            mousePosY = event.getSceneY();
+            dx = mousePosX - mouseOldX;
+            dy = mousePosY - mouseOldY;
+
+            this.rotateX(dy * ROTATION_SPEED);
+            this.rotateY(dx * ROTATION_SPEED);
+        });
+
     }
 
 }
