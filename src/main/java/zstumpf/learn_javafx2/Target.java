@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.geometry.Point3D;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,40 +57,40 @@ public class Target extends Sphere {
      * @param map3D
      */
     public void renderId(boolean render, SubScene map3D, Camera camera, Pane labelPane) {
-        Point3D targetPosition3d = this.point3D;
+        for (Target target : Target.allTargets) {
+            Point3D coords3D = target.localToScene(Point3D.ZERO, true);
+            System.out.println("3d target Coordinates: " + coords3D.toString());
 
-        XForm cameraXForm = camera.getXForm();
+            //Clipping Logic
+            //if coordinates are outside of the scene it could
+            //stretch the screen so don't transform them
+            double x = coords3D.getX();
+            double y = coords3D.getY();
+            //is it left of the view?
+            if(x < 0) {
+                x = 0;
+            }
 
-        // Stores translation and rotation data of the camera
-        Affine cameraTransform = new Affine(); // cameraTransform represents where the target appears to be, I think...
+            Label label = new Label(" " + this.id);
 
-        // As camera moves one direction, the object appears to move in the opposite direction.
-        // Here, apply where the object appears to be.
-        cameraTransform.appendTranslation(-1 * cameraXForm.t.getX(), -1 * cameraXForm.t.getY(), -1 * cameraXForm.t.getZ());
-
-        // Get 3D point of camera's current position
-        Point3D cameraCurrentPos3d = new Point3D(cameraXForm.t.getX(), cameraXForm.t.getY(), cameraXForm.t.getZ());
-
-        cameraTransform.appendRotation(cameraXForm.rx.getAngle(), cameraCurrentPos3d, Rotate.X_AXIS);
-        cameraTransform.appendRotation(cameraXForm.ry.getAngle(), cameraCurrentPos3d, Rotate.Y_AXIS);
-        cameraTransform.appendRotation(cameraXForm.rz.getAngle(), cameraCurrentPos3d, Rotate.Z_AXIS);
-
-        // Applies the same translation and rotation state of the camera to the target's 3D position
-        Point3D transformedPosition = cameraTransform.transform(targetPosition3d);
-        System.out.println("transformedPosition: " + transformedPosition);
-
-        // ChatGPT says z scaling is crucial for projecting 3d coordinates to 2d. ... I think this is just glitchy.
-        double scaleFactor = 2.0 / (transformedPosition.getZ() + 1); // Add 1 to avoid division by zero
-        double x2D = transformedPosition.getX() * scaleFactor + (map3D.getWidth() / 2);
-        double y2D = -1 * transformedPosition.getY() * scaleFactor + (map3D.getHeight() / 2); // Invert Y for screen coordinates
-        System.out.println("Place label at x " + x2D + " and y " + y2D);
-
-        if (render) {
-            Label targetLabel = new Label(" " + this.id);
-            targetLabel.setLayoutX(x2D);
-            targetLabel.setLayoutY(y2D);
-            labelPane.getChildren().add(targetLabel);
+            //is it right of the view?
+            if((x+label.getWidth()+5) > map3D.getWidth()) {
+                x = map3D.getWidth() - (label.getWidth()+5);
+            }
+            //is it above the view?
+            if(y < 0) {
+                y = 0;
+            }
+            //is it below the view
+            if((y+label.getHeight()) > map3D.getHeight())
+                y = map3D.getHeight() - (label.getHeight()+5);
+            //@DEBUG SMP  useful debugging print
+            //System.out.println("clipping Coordinates: " + x + ", " + y);
+            //update the local transform of the label.
+            label.getTransforms().setAll(new Translate(x, y));
+            labelPane.getChildren().add(label);
         }
+
     }
 
     @Override
