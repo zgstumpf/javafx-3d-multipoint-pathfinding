@@ -6,7 +6,7 @@ import javafx.scene.Group;
 import java.util.List;
 
 public class Pathfinder {
-    public static AStarSearch.AStarSolution[][] aStarSolutionMatrix = new AStarSearch.AStarSolution[Target.allTargets.size()][Target.allTargets.size()];
+    public static AStarSearch.AStarSolution[][] aStarSolutionMatrix = new AStarSearch.AStarSolution[Target.getAll().size()][Target.getAll().size()];
 
     /**
      * Use A* algorithm to compute the shortest path for each Target to every other Target.

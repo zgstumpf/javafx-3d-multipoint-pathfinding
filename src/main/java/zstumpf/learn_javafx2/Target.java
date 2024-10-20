@@ -17,20 +17,28 @@ import java.util.List;
  * A Target is a point or node that the pathfinder must visit at least once. It is visually represented by a small sphere.
  */
 public class Target extends Sphere {
-    public static List<Target> allTargets = new ArrayList<>();
+    // Internal List to keep track of all Target instances that exist on the map.
+    private static List<Target> all = new ArrayList<>();
 
-    // The id, or identifier, is used to tell Targets apart.
-    public final int id;
+    // The name is used to tell Targets apart.
+    private final String name;
 
     // The target's label that appears on the map.
-    public Label label;
+    private Label label;
 
     // The Point3D associated with the Target
     public Point3D point3D;
 
-    public Target(int id, double translateX, double translateY, double translateZ){
-        this.id = id;
-        this.label = new Label(String.valueOf(this.id));
+    /**
+     *
+     * @param name Name used to identify this target. Should be unique for all Target instances.
+     * @param translateX JavaFX 3D X-coordinate for where to place this target.
+     * @param translateY JavaFX 3D Y-coordinate for where to place this target.
+     * @param translateZ JavaFX 3D Z-coordinate for where to place this target.
+     */
+    public Target(String name, double translateX, double translateY, double translateZ){
+        this.name = name;
+        this.label = new Label(this.name);
 
         // Position
         this.setTranslateX(translateX);
@@ -50,7 +58,22 @@ public class Target extends Sphere {
         this.point3D = new Point3D(this.getTranslateX(), this.getTranslateY(), this.getTranslateZ());
 
         // Keep track of this target
-        allTargets.add(this);
+        all.add(this);
+    }
+
+    /**
+     *
+     * @return a List of all Target instances that exist on the map.
+     */
+    public static List<Target> getAll() {
+        return Target.all;
+    }
+
+    /**
+     * @return name of this target
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**
@@ -160,7 +183,7 @@ public class Target extends Sphere {
      * Calls {@link #renderLabel(boolean, SubScene, Pane) renderLabel} for all targets on the map.
      */
     public static void renderLabelAll(boolean render, SubScene map3D, Pane labelPane) {
-        for (Target target : Target.allTargets) {
+        for (Target target : Target.all) {
             target.renderLabel(render, map3D, labelPane);
         }
     }
@@ -168,7 +191,7 @@ public class Target extends Sphere {
     @Override
     public String toString() {
         return "Target{" +
-                "id=" + id +
+                "name=" + name +
                 ", point3D=" + point3D.toString() +
                 '}';
     }

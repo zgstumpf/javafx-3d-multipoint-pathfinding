@@ -126,10 +126,10 @@ public class Program extends Application {
         Obstacle baseplate = new Obstacle(0,100,0,2000, 1, 2000);
         root3d.getChildren().add(baseplate);
 
-        Target target0 = new Target(1, 0, 0, 0);
+        Target target0 = new Target("1", 0, 0, 0);
         root3d.getChildren().add(target0);
 
-//        Target target1 = new Target(2, 400, 0, 0);
+//        Target target1 = new Target("2", 400, 0, 0);
 //        root3d.getChildren().add(target1);
 
         Obstacle wall = new Obstacle(200, 0, 0, 20, 300, 750);
@@ -186,13 +186,13 @@ public class Program extends Application {
 
                 GridPane distancesTable = new GridPane();
                 distancesTable.setGridLinesVisible(true);
-                for (int i = 0; i < Target.allTargets.size(); i++) {
-                    Target target = Target.allTargets.get(i);
+                for (int i = 0; i < Target.getAll().size(); i++) {
+                    Target target = Target.getAll().get(i);
 
                     // Even though Labels contain the same information, they must be separate nodes
                     // to be added to two different spots in the GridPane.
-                    Label targetLabelTopRow = new Label(String.valueOf(target.id));
-                    Label targetLabelLeftCol = new Label(String.valueOf(target.id));
+                    Label targetLabelTopRow = new Label(target.getName());
+                    Label targetLabelLeftCol = new Label(target.getName());
 
                     // 10px padding on all sides
                     targetLabelTopRow.setPadding(new Insets(10));
